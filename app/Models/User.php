@@ -14,7 +14,6 @@ class User extends Authenticatable
     protected $fillable = [
         'login',
         'password',
-        'phone_number',
         'birthday',
         'name',
         'avatar',
@@ -31,13 +30,9 @@ class User extends Authenticatable
         'deleted_posts_count' => 'integer'
     ];
 
-    public function blockIfNeeded()
+    public function contacts()
     {
-        if ($this->deleted_posts_count >= 5 && !$this->is_blocked) {
-            $this->update(['is_blocked' => true]);
-            return true;
-        }
-        return false;
+        return $this->hasMany(Contact::class, 'user_ID');
     }
 
     public function posts()

@@ -12,7 +12,6 @@ return new class extends Migration
             $table->id();
             $table->string('login')->unique();
             $table->string('password');
-            $table->string('phone_number')->nullable();
             $table->date('birthday')->nullable();
             $table->boolean('is_blocked')->default(false);
             $table->string('name');

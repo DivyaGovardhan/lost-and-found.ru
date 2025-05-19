@@ -16,22 +16,27 @@ class AuthController extends Controller
             'login' => 'required|string|max:100|unique:users',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'name' => 'required|string|max:100',
-            'phone_number' => 'nullable|string|max:20',
             'birthday' => 'required|date|before_or_equal:' . now()->subYears(18)->format('Y-m-d'),
+            'contacts' => 'required|array|min:1',
+            'contacts.*' => 'required|string|max:255',
         ]);
 
         $user = User::create([
             'login' => $request->login,
             'password' => Hash::make($request->password),
             'name' => $request->name,
-            'phone_number' => $request->phone_number,
             'birthday' => $request->birthday,
         ]);
+
+        // Создаём контакты
+        foreach ($request->contacts as $contact) {
+            $user->contacts()->create(['contact' => $contact]);
+        }
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
-            'user' => $user,
+            'user' => $user->load('contacts'),
             'token' => $token,
         ], 201);
     }
@@ -50,12 +55,12 @@ class AuthController extends Controller
                 'user_id' => $user->id,
                 'login' => $request->login
             ]);
-            
+
             return response()->json([
                 'message' => 'Ваш аккаунт заблокирован за нарушения'
             ], 403);
         }
-    
+
         if (!Auth::attempt($request->only('login', 'password'))) {
             return response()->json([
                 'message' => 'Invalid login credentials'

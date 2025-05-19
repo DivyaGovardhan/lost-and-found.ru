@@ -93,6 +93,17 @@ class Post extends Model
         ]);
     }
 
+    public static function getFullPostById($id)
+    {
+        return self::with([
+            'category',
+            'foundStatus',
+            'postStatus',
+            'district',
+            'user.contacts'
+        ])->find($id);
+    }
+
     public static function validateUpdate(array $data)
     {
         return validator($data, [
@@ -125,7 +136,7 @@ class Post extends Model
         if ($this->photo) {
             Storage::disk('public')->delete($this->photo);
         }
-        
+
         return $this->delete();
     }
 
@@ -134,7 +145,7 @@ class Post extends Model
         $extension = $photo->getClientOriginalExtension();
         $filename = Str::random(40) . '.' . $extension;
         $path = $photo->storeAs('posts', $filename, 'public');
-        
+
         return $path;
     }
 
@@ -189,14 +200,14 @@ class Post extends Model
                 $author = User::where('id', $this->user_ID)
                     ->lockForUpdate()
                     ->first();
-                
+
                 $author->increment('deleted_posts_count');
                 $this->delete();
-                
+
                 if ($author->deleted_posts_count >= 5) {
                     $author->is_blocked = true;
                     $author->save();
-                    
+
                     \Log::info('User blocked successfully', [
                         'user_id' => $author->id,
                         'deleted_posts' => $author->deleted_posts_count,

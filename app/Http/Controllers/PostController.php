@@ -13,10 +13,10 @@ class PostController extends Controller
     public function store(Request $request)
     {
         $user = Auth::user();
-        
+
         try {
             $validatedData = Post::validateCreation($request->all());
-            
+
             $post = Post::createPost(
                 $validatedData,
                 $user,
@@ -27,7 +27,7 @@ class PostController extends Controller
                 'message' => 'Post created successfully',
                 'post' => $post->load(['category', 'foundStatus', 'postStatus', 'district'])
             ], 201);
-            
+
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'message' => 'Validation failed',
@@ -82,7 +82,7 @@ class PostController extends Controller
     {
         $user = $request->user();
         $posts = $user->getUserPosts();
-        
+
         return response()->json([
             'posts' => $posts,
             'user' => [
@@ -99,11 +99,22 @@ class PostController extends Controller
         return response()->json($posts);
     }
 
+    public function show($id)
+    {
+        $post = Post::getFullPostById($id);
+
+        if (!$post) {
+            return response()->json(['message' => 'Post not found'], 404);
+        }
+
+        return response()->json($post);
+    }
+
     public function search(Request $request)
     {
         $request->validate(['query' => 'required|string|min:2']);
-        
-        $posts = Post::search($request->input('query')); 
+
+        $posts = Post::search($request->input('query'));
         return response()->json($posts);
     }
 }
