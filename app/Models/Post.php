@@ -92,6 +92,42 @@ class Post extends Model
         ]);
     }
 
+    public static function validateUpdate(array $data)
+    {
+        return validator($data, [
+            'title' => 'sometimes|string|max:100',
+            'description' => 'sometimes|string',
+            'category_ID' => 'sometimes|integer|exists:categories,ID',
+            'photo' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'found_ID' => 'sometimes|integer|exists:found,ID',
+            'street' => 'nullable|string|max:100',
+            'house' => 'nullable|string|max:20',
+            'district_ID' => 'sometimes|integer|exists:districts,ID',
+        ])->validate();
+    }
+
+    public function updatePost(array $data, $photo = null)
+    {
+        if ($photo) {
+            Storage::disk('public')->delete($this->photo);
+            $this->photo = self::storePhoto($photo);
+        }
+
+        $this->fill($data);
+        $this->save();
+
+        return $this->fresh()->load(['category', 'foundStatus', 'postStatus', 'district']);
+    }
+
+    public function deletePost()
+    {
+        if ($this->photo) {
+            Storage::disk('public')->delete($this->photo);
+        }
+        
+        return $this->delete();
+    }
+
     protected static function storePhoto($photo)
     {
         $extension = $photo->getClientOriginalExtension();
@@ -99,5 +135,28 @@ class Post extends Model
         $path = $photo->storeAs('posts', $filename, 'public');
         
         return $path;
+    }
+
+    public static function filter(array $filters)
+    {
+        return self::query()
+            ->when(isset($filters['district_ID']), fn($q) => $q->where('district_ID', $filters['district_ID']))
+            ->when(isset($filters['found_ID']), fn($q) => $q->where('found_ID', $filters['found_ID']))
+            ->when(isset($filters['category_ID']), fn($q) => $q->where('category_ID', $filters['category_ID']))
+            ->with(['category', 'foundStatus', 'district', 'user'])
+            ->latest()
+            ->paginate(15);
+    }
+
+    public static function search(string $query)
+    {
+        return self::query()
+            ->where(function($q) use ($query) {
+                $q->where('title', 'like', "%{$query}%")
+                ->orWhere('description', 'like', "%{$query}%");
+            })
+            ->with(['category', 'foundStatus', 'district'])
+            ->latest()
+            ->paginate(15);
     }
 }

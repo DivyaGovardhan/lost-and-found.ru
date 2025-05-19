@@ -43,13 +43,21 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
+        $user = User::where('login', $request->login)->firstOrFail();
+
+        // Проверка блокировки
+        if ($user && $user->is_blocked) {
+            return response()->json([
+                'message' => 'Your account has been blocked due to multiple policy violations'
+            ], 403);
+        }
+    
         if (!Auth::attempt($request->only('login', 'password'))) {
             return response()->json([
                 'message' => 'Invalid login credentials'
             ], 401);
         }
 
-        $user = User::where('login', $request->login)->firstOrFail();
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
