@@ -78,6 +78,21 @@ class PostController extends Controller
         }
     }
 
+    public function userPosts(Request $request)
+    {
+        $user = $request->user();
+        $posts = $user->getUserPosts();
+        
+        return response()->json([
+            'posts' => $posts,
+            'user' => [
+                'name' => $user->name,
+                'total_posts' => $user->posts()->count(),
+                'deleted_posts' => $user->deleted_posts_count
+            ]
+        ]);
+    }
+
     public function index(Request $request)
     {
         $posts = Post::filter($request->all());

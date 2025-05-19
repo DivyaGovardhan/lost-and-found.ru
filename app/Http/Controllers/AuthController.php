@@ -17,7 +17,7 @@ class AuthController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'name' => 'required|string|max:100',
             'phone_number' => 'nullable|string|max:20',
-            'birthday' => 'nullable|date',
+            'birthday' => 'required|date|before_or_equal:' . now()->subYears(18)->format('Y-m-d'),
         ]);
 
         $user = User::create([
@@ -43,12 +43,16 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        $user = User::where('login', $request->login)->firstOrFail();
+        $user = User::where('login', $request->login)->first();
 
-        // Проверка блокировки
         if ($user && $user->is_blocked) {
+            \Log::info('Blocked login attempt', [
+                'user_id' => $user->id,
+                'login' => $request->login
+            ]);
+            
             return response()->json([
-                'message' => 'Your account has been blocked due to multiple policy violations'
+                'message' => 'Ваш аккаунт заблокирован за нарушения'
             ], 403);
         }
     

@@ -28,5 +28,33 @@ class User extends Authenticatable
     protected $casts = [
         'is_blocked' => 'boolean',
         'birthday' => 'date',
+        'deleted_posts_count' => 'integer'
     ];
+
+    public function blockIfNeeded()
+    {
+        if ($this->deleted_posts_count >= 5 && !$this->is_blocked) {
+            $this->update(['is_blocked' => true]);
+            return true;
+        }
+        return false;
+    }
+
+    public function posts()
+    {
+        return $this->hasMany(Post::class, 'user_ID');
+    }
+
+    public function complaints()
+    {
+        return $this->hasMany(Complaint::class);
+    }
+
+    public function getUserPosts()
+    {
+        return $this->posts()
+            ->with(['category', 'foundStatus', 'district', 'postStatus'])
+            ->orderBy('date', 'desc')
+            ->paginate(10);
+    }
 }

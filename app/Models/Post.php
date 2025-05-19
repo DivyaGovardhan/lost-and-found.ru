@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
@@ -158,5 +159,51 @@ class Post extends Model
             ->with(['category', 'foundStatus', 'district'])
             ->latest()
             ->paginate(15);
+    }
+
+    public function complaints()
+    {
+        return $this->hasMany(Complaint::class);
+    }
+
+    public function addComplaint(User $complainingUser)
+    {
+        DB::transaction(function () use ($complainingUser) {
+            // Проверка, что пользователь не автор
+            if ($this->user_ID === $complainingUser->id) {
+                throw new \Exception('Нельзя жаловаться на своё объявление');
+            }
+
+            // Проверка существующей жалобы
+            if ($this->complaints()->where('user_id', $complainingUser->id)->exists()) {
+                throw new \Exception('Вы уже жаловались на это объявление');
+            }
+
+            // Создаём жалобу
+            $this->complaints()->create(['user_id' => $complainingUser->id]);
+            $this->increment('complaint_number');
+
+            // Проверка на блокировку
+            if ($this->complaint_number >= 10) {
+                // Атомарное обновление с получением обновлённой модели
+                $author = User::where('id', $this->user_ID)
+                    ->lockForUpdate()
+                    ->first();
+                
+                $author->increment('deleted_posts_count');
+                $this->delete();
+                
+                if ($author->deleted_posts_count >= 5) {
+                    $author->is_blocked = true;
+                    $author->save();
+                    
+                    \Log::info('User blocked successfully', [
+                        'user_id' => $author->id,
+                        'deleted_posts' => $author->deleted_posts_count,
+                        'is_blocked' => $author->is_blocked
+                    ]);
+                }
+            }
+        });
     }
 }
