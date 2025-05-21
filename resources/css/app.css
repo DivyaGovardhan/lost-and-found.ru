@@ -1,0 +1,543 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #FFFFFF;
+}
+
+body {
+    color: #333;
+}
+
+
+h1 {
+    font-size: 20px;
+    color: black;
+    font-weight: normal;
+}
+
+p {
+    font-size: 14px;
+    color: black;
+    font-weight: normal;
+}
+
+.container {
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 20px 70px;
+}
+
+.logo-container {
+    display: flex;
+    align-items: flex-end;
+}
+
+.header1 {
+    border-left: 2px solid black;
+    padding-left: 10px;
+    margin-left: 10px;
+}
+
+nav {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-right: 100px;
+}
+
+nav a {
+    color: #000000;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+nav a:hover {
+    color: #F1291E;
+}
+
+.nav-btn {
+    width: fit-content;
+    padding: 10px 10px;
+    background-color: #FC443A;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12pt;
+    font-weight: 400;
+    box-shadow: 0 2px 8px rgba(252, 68, 58, 0.10);
+    transition: background 0.2s;
+}
+
+.nav-btn:hover {
+    background-color: #e03b2f;
+}
+
+.search-section {
+    text-align: center;
+    margin: 40px 0;
+}
+
+.search-section h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+
+.search-box {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+    gap: 10px; /* Расстояние между input и button */
+}
+
+/* Поле ввода */
+.search-box input {
+    width: 900px;
+    height: 65px;
+    padding: 22px 40px;
+    border: 2px solid #D9D9D9; /* серая обводка */
+    border-radius: 16px; /* закругленные края */
+    font-size: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* легкая тень */
+    outline: none; /* убрать стандартный синий контур при фокусе */
+    transition: border-color 0.3s, box-shadow 0.3s;
+    font-weight: normal;
+
+}
+
+/* Цвет плейсхолдера */
+.search-box input::placeholder {
+    color: #D9D9D9; /* серый цвет */
+}
+
+
+/* Кнопка */
+.search-box button {
+    padding: 10px 25px;
+    height: 65px;
+    background-color: #FC443A;
+    color: white;
+    border: 1px solid #FC443A; /* чтобы обводка была, совпадает с фоном */
+    border-radius: 16px; /* закругленные края */
+    cursor: pointer;
+    font-size: 16px;
+    box-shadow: 0 2px 5px rgba(252, 68, 58, 0.5); /* тень */
+    font-weight: bold;
+}
+
+/* При наведении на кнопку */
+.search-box button:hover {
+    background-color: #e03b2f;
+}
+
+
+.search-section img {
+    margin: -30px auto 20px;
+}
+
+/* Сброс стилей */
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    font-family: inherit;
+    font-size: inherit;
+    cursor: pointer;
+}
+
+select::-ms-expand {
+    display: none;
+}
+
+/* Сброс стандартных стилей */
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    font-family: inherit;
+    font-size: inherit;
+    cursor: pointer;
+}
+
+select::-ms-expand {
+    display: none;
+}
+
+/* Кастомные стили */
+.filters {
+    margin-top: 60px;
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.filter-item {
+    position: relative;
+    width: 230px; /* Фиксированная ширина */
+}
+
+.filter-item select {
+    width: 100%;
+    padding: 10px 15px;
+    padding-right: 40px; /* Место для стрелки */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    color: #74797E;
+    font-size: 14px;
+    background-image: url('../img/arrow-down-disabled.svg');
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 12px; /* Размер стрелки */
+}
+
+.filter-item select:hover {
+    border-color: #aaa;
+}
+
+.filter-item select:focus {
+    border-color: #2c3e50;
+    box-shadow: 0 0 0 2px rgba(44, 62, 80, 0.2);
+    background-image: url('../img/arrow-down-disabled.svg');
+}
+
+/* Удаляем псевдоэлемент со стрелкой, так как используем фоновое изображение */
+.filter-item::after {
+    display: none;
+}
+
+.loading-container{
+    width: 100%;
+}
+
+.items-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+}
+
+.item-card {
+    border-radius: 26px;
+    border: 1px solid #D9D9D9;
+    padding: 15px 12px;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    width: 315px;
+}
+
+.item-image {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    border-radius: 26px;
+    overflow: hidden;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.status-flag {
+    position: absolute;
+    width: 116px;
+    height: 40px;
+    top: 16px;
+    right: 5px;
+    background: #F1921E; /* Оранжевый */
+    color: #fff;
+    padding: 12px 22px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    z-index: 2;
+    white-space: nowrap;
+    letter-spacing: 0.5px;
+}
+
+.status-flag.found {
+    background: #F1921E; /* Цвет для "Найдено" */
+}
+.status-flag.lost {
+    background: #FC443A; /* Цвет для "Потеряно" */
+}
+
+.item-image img {
+    width: 96%;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 26px;
+}
+
+.item-card a {
+    font-size: 20px;
+    color: #1E79F1;
+    text-decoration: underline;
+    margin: 0 0 15px 0;
+    text-align: left;
+    font-weight: bold;
+}
+
+.item-card .date {
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+    display: inline-block;
+}
+
+.item-card .address {
+    font-size: 14px;
+    color: #232323;
+    margin: 8px 0 5px 0;
+    text-align: left;
+    font-weight: bold;
+}
+
+.item-card .description {
+    font-size: 14px;
+    line-height: 1.4;
+    color: #333;
+    margin-top: 10px;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.item-card .id {
+    font-size: 12px;
+    color: #999;
+    margin: 1px 5px;
+    text-align: left;
+}
+
+/* Контейнер для даты и просмотров */
+.date-views {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 5px;
+    justify-content: space-between;
+}
+
+.eye-icon {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+}
+
+.view {
+    display: flex;
+    align-items: center;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0,0,0,0.12);
+    overflow-y: auto;
+}
+
+.modal-content {
+    margin: 40px auto;
+    padding: 44px 36px 32px 36px;
+    border-radius: 38px;
+    width: 500px;
+    max-width: 95vw;
+    box-shadow: 0 6px 32px rgba(0,0,0,0.13);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.close {
+    position: absolute;
+    top: 1.2rem;
+    right: 1.2rem;
+    background: none;
+    border: none;
+    font-size: 30pt;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: #FC443A;
+}
+
+.modal-content h2 {
+    margin: 0 0 32px 0;
+    text-align: center;
+    color: #111;
+    font-weight: 700;
+    font-size: 32px;
+    letter-spacing: 0.5px;
+}
+
+.form-group {
+    margin-bottom: 26px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 7px;
+    font-weight: 600;
+    color: #222;
+    font-size: 18px;
+}
+
+.form-group input:not([type="radio"]) {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 12px;
+    font-size: 18px;
+    background: #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+    border-color: #FC443A;
+    outline: none;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 14px 0;
+    background-color: #FC443A;
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: 600;
+    margin-top: 16px;
+    box-shadow: 0 2px 8px rgba(252, 68, 58, 0.10);
+    transition: background 0.2s;
+}
+
+.submit-btn:hover {
+    background-color: #e03b2f;
+}
+
+.modal-content .additional-link {
+    margin-top: 24px;
+    text-align: center;
+    font-size: 16px;
+    color: #888;
+}
+
+.modal-content .additional-link a {
+    color: #FC443A;
+    text-decoration: underline;
+    transition: color 0.2s;
+}
+
+.modal-content .additional-link a:hover {
+    color: #b71c1c;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 0;
+    display: none;
+    pointer-events: none;
+}
+input[type="date"] {
+    -moz-appearance: textfield; /* Firefox */
+}
+
+.pagination {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 24px;
+    margin: 80px 0 20px 80px;
+}
+
+.page-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: transparent;
+    color: #111;
+    text-decoration: none;
+    font-size: 20px;
+    font-weight: 700;
+    transition: background 0.2s, color 0.2s;
+    border: none;
+    outline: none;
+    cursor: pointer;
+}
+
+.page-link:not(.next):hover {
+    background: #f2f2f2;
+}
+
+.page-link.active {
+    background: #f2f2f2;
+    color: #111;
+    pointer-events: none;
+}
+
+.arrow {
+    font-size: 32px;
+    font-weight: bold;
+    line-height: 1;
+    display: inline-block;
+}
+
+
+.footer {
+    width: 100%;
+    height: 200px;
+    background: #eaeaea;
+    padding: 24px 0 20px 0;
+    text-align: center;
+    color: #888;
+    font-size: 16px;
+    letter-spacing: 0.5px;
+    position: relative;
+    bottom: 0;
+    left: 0;
+    margin-top: 40px;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+}

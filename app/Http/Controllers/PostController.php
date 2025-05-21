@@ -117,4 +117,23 @@ class PostController extends Controller
         $posts = Post::search($request->input('query'));
         return response()->json($posts);
     }
+
+    public function toggleStatus(Post $post)
+    {
+        $this->authorize('update', $post); // Проверяем права на изменение
+
+        try {
+            $post->toggleStatus();
+
+            return response()->json([
+                'message' => 'Статус объявления успешно изменён',
+                'post' => $post->load(['category', 'foundStatus', 'postStatus', 'district'])
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Не удалось изменить статус',
+                'error' => $e->getMessage()
+            ], 400);
+        }
+    }
 }

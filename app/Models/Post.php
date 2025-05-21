@@ -151,21 +151,27 @@ class Post extends Model
 
     public static function filter(array $filters)
     {
-        return self::query()
+        $query = self::query()
             ->when(isset($filters['district_ID']), fn($q) => $q->where('district_ID', $filters['district_ID']))
             ->when(isset($filters['found_ID']), fn($q) => $q->where('found_ID', $filters['found_ID']))
             ->when(isset($filters['category_ID']), fn($q) => $q->where('category_ID', $filters['category_ID']))
             ->with(['category', 'foundStatus', 'district', 'user'])
-            ->latest()
-            ->paginate(15);
+            ->latest();
+
+        // Если нет фильтров, возвращаем все посты (можно заменить на ->get() если не нужна пагинация)
+        if (empty($filters)) {
+            return $query->get(); // или ->paginate(100), если много данных
+        }
+
+        return $query->paginate(15);
     }
 
     public static function search(string $query)
     {
         return self::query()
             ->where(function($q) use ($query) {
-                $q->where('title', 'like', "%{$query}%")
-                ->orWhere('description', 'like', "%{$query}%");
+                $q->whereRaw('LOWER(title) LIKE ?', ['%' . strtolower($query) . '%'])
+                  ->orWhereRaw('LOWER(description) LIKE ?', ['%' . strtolower($query) . '%']);
             })
             ->with(['category', 'foundStatus', 'district'])
             ->latest()
@@ -216,5 +222,20 @@ class Post extends Model
                 }
             }
         });
+    }
+
+    public function toggleStatus()
+    {
+        if ($this->status_ID === 1) {
+            $this->status_ID = 2; // Закрыто
+        } elseif ($this->status_ID === 2) {
+            $this->status_ID = 1; // Активно
+        } else {
+            throw new \Exception('Невозможно переключить статус: текущий статус не поддерживается');
+        }
+
+        $this->save();
+
+        return $this;
     }
 }
